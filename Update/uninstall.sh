@@ -18,25 +18,22 @@ fi
 # remove (if not part of original FECs) AMI/USB enabled, Bluetooth, Android Auto
 fecswap -r 00030000 00050000 00060900 -f /mnt/persist_new/fec/granted.fecs
 
-
-# Uninstall Android Auto multi device fix - fifthBro (https://github.com/fifthBro/pcm5-androidauto-connect-fix/)
+# Uninstall Android Auto multi device fix
 if [ "$OEM" = "PO" ]; then
-        echo "Porsche detected, checking if Android Auto fix was applied"
-        if [[ "$SOFTWARE_VERSION" == 26?? || "$SOFTWARE_VERSION" == 28?? ]]; then
-                echo "Firmware $RELEASE_VERSION is within the affected range (26xx-28xx) -> Android Auto fix was required"
-                [[ ! -e "/mnt/app" ]] && mount -t qnx6 /dev/mnanda0t177.1 /mnt/app
-                mount -uw /mnt/app/
-                if [[ -e "/mnt/app/eso/hmi/lsd/jars" ]]; then                    
-                    if [[ -f "/mnt/app/eso/hmi/lsd/jars/aafix.jar" ]]; then
-                        echo "Backing up: /mnt/app/eso/hmi/lsd/jars/aafix.jar"
-                        cp -vf /mnt/app/eso/hmi/lsd/jars/aafix.jar $MOD_PATH/Backup/
-                        echo "Removing: /mnt/app/eso/hmi/lsd/jars/aafix.jar"
-                        rm -vf /mnt/app/eso/hmi/lsd/jars/aafix.jar
-                    fi                                                  
-                else
-                        echo "error: /mnt/app/eso/hmi/lsd/jars does not exist"
-                fi               
+    echo "Porsche detected, checking if Android Auto fix was applied"
+    if [[ "$SOFTWARE_VERSION" == 26?? || "$SOFTWARE_VERSION" == 28?? ]]; then
+        echo "Firmware $RELEASE_VERSION is within the affected range (26xx-28xx) -> Android Auto fix was required"
+        if [[ -e "/mnt/app/eso/hmi/lsd/jars" ]]; then
+            if [[ -f "/mnt/app/eso/hmi/lsd/jars/aafix.jar" ]]; then
+                echo "Backing up: /mnt/app/eso/hmi/lsd/jars/aafix.jar"
+                cp -vf /mnt/app/eso/hmi/lsd/jars/aafix.jar $MOD_PATH/Backup/
+                echo "Removing: /mnt/app/eso/hmi/lsd/jars/aafix.jar"
+                rm -vf /mnt/app/eso/hmi/lsd/jars/aafix.jar
+            fi
         else
-                echo "Firmware $RELEASE_VERSION is outside the affected range (26xx-28xx) -> Android Auto fix was not required"                
+            echo "error: /mnt/app/eso/hmi/lsd/jars does not exist"
         fi
+    else
+        echo "Firmware $RELEASE_VERSION is outside the affected range (26xx-28xx) -> Android Auto fix was not required"
+    fi
 fi
